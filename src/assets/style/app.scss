@@ -1,0 +1,38 @@
+@import "./fonts";
+@import "./variables";
+@import "./libs/normalize";
+@import "./components/all";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.container {
+    max-width: 1176px;
+    padding: 0 10px;
+    margin: 0 auto;
+}
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.description {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 50px;
+    .title {
+        margin-bottom: 10px;
+        font-size: 24px;
+        font-weight: 600;
+    }
+    .subtitle {
+        text-align: center;
+    }
+}
+.content__items{
+    display: flex;
+    flex-wrap: wrap;
+}
