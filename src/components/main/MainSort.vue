@@ -1,5 +1,5 @@
 <template>
-  <div class="sort" ref="sort">
+  <div class="sort">
     <div class="sort__label">
       <svg
         :class="{ rotated: isVisibleSort }"
@@ -17,7 +17,7 @@
       <b>Сортировка по:</b>
       <span @click="isVisibleSort = !isVisibleSort">популярности</span>
     </div>
-    <div v-if="isVisibleSort" class="sort__popup">
+    <div v-if="isVisibleSort" class="sort__popup" ref="sort">
       <ul v-if="sort">
         <li v-for="sort in sort" :key="sort.name">
           {{ sort.name }}
@@ -42,11 +42,12 @@ export default {
   },
 
   methods: {
-    handleClick(e) {
-      if (!e.path.includes(this.$refs.sort)) {
-        this.isVisibleSort = false;
-      }
-    },
+    // handleClick(e) {
+    //   console.log(e);
+    //   // if (!e.path.includes(this.$refs.sort)) {
+    //   //   this.isVisibleSort = false;
+    //   // }
+    // },
   },
 
   mounted() {

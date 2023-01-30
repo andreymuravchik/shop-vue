@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="header__cart">
-        <a href="/cart.html" class="button button--cart">
+        <a href="/basket" class="button button--cart">
           <span>520 ₽</span>
           <div class="button__delimiter"></div>
           <svg

@@ -2,7 +2,11 @@
   <div class="categories">
     <ul v-if="catesories" class="categories__list">
       <li>all</li>
-      <li v-for="catesorie in catesories" :key="catesorie.id">
+      <li
+        @click="onClickCategory(catesorie.id)"
+        v-for="catesorie in catesories"
+        :key="catesorie.id"
+      >
         {{ catesorie.name }}
       </li>
     </ul>
@@ -16,6 +20,11 @@ export default {
     catesories: {
       type: Object,
       default: () => {},
+    },
+  },
+  methods: {
+    onClickCategory(id) {
+      this.$emit("selectCategory", id);
     },
   },
 };

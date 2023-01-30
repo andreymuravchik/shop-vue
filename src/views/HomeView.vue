@@ -4,141 +4,48 @@
     <div class="content">
       <div class="container">
         <div class="options">
-          <MainCategories :catesories="catesories" />
-          <MainSort :sort="sort" />
+          <MainCategories
+            v-if="catesories"
+            :catesories="catesories"
+            @selectCategory="selectCategory"
+          />
+          <MainSort v-if="sort" :sort="sort" />
         </div>
         <h2 class="content__title">Все пиццы</h2>
         <div class="goods__wrap">
-          <MainGoods :goods="goods" v-if="goods" />
+          <MainGoods :goods="filterGoods" v-if="goods" />
         </div>
+        <button type="button" class="btn btn-primary" @click="openModal">
+          Подробнее
+        </button>
+
+        <GoodsPopup
+          v-if="isModalOpen"
+          title="Пользовательское соглашение"
+          @close="isModalOpen = false"
+        >
+          <template v-slot:ex>rrrrrr</template>
+        </GoodsPopup>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 import MainGoods from "@/components/main/MainGoods.vue";
 import MainSort from "@/components/main/MainSort.vue";
 import MainCategories from "@/components/main/MainCategories.vue";
 import BaseHeader from "@/components/base/BaseHeader.vue";
+import GoodsPopup from "@/components/popup/GoodsPopup.vue";
 
 export default {
   name: "HomeView",
-  components: { MainGoods, MainSort, MainCategories, BaseHeader },
+  components: { MainGoods, MainSort, MainCategories, BaseHeader, GoodsPopup },
   data() {
     return {
-      goods: [
-        {
-          id: 0,
-          name: "Ручка гелевая Economix Boss 1мм черная E11914-01",
-          types: [0, 1],
-          img: "https://kancmart.com.ua/content/images/49/240x240l85nn0/68432642242585.webp",
-          price: 30,
-          category: 2,
-          rating: 4,
-          art: "Артикул: 2129",
-        },
-        {
-          id: 1,
-          name: "Скотч двухсторонний 18мм*10м Special Type 70081CW",
-          types: [0],
-          img: "https://kancmart.com.ua/content/images/5/240x227l85nn0/52114656753195.webp",
-          price: 15,
-          category: 1,
-          rating: 5,
-          art: "Артикул: 180147/74027",
-        },
-        {
-          id: 2,
-          name: "Скотч двухсторонний 24мм*10м Special Type 70081CW",
-          types: [0],
-          img: "https://kancmart.com.ua/content/images/6/240x227l85nn0/51817943096528.webp",
-          price: 20,
-          category: 1,
-          rating: 4,
-          art: " Артикул: 5683",
-        },
-        {
-          id: 3,
-          name: "Скотч двухсторонний 36мм*10м Special Type 70081CW",
-          types: [1],
-          img: "https://kancmart.com.ua/content/images/7/240x227l85nn0/52804505123268.webp",
-          price: 30,
-          category: 1,
-          rating: 2,
-          art: "Артикул: H0016743",
-        },
-        {
-          id: 4,
-          name: "Ручка гелевая Economix Boss 1мм синяя E11914-02",
-          types: [0, 1],
-          img: "https://kancmart.com.ua/content/images/5/240x240l85nn0/33403544523860.webp",
-          price: 40,
-          category: 2,
-          rating: 4,
-          art: "Артикул: L001710",
-        },
-        {
-          id: 5,
-          name: "Ручка гелевая Пишет-Стирает Neo Line ",
-          types: [0],
-          img: "https://kancmart.com.ua/content/images/33/240x240l85nn0/56032685744028.webp",
-          price: 45,
-          category: 2,
-          rating: 5,
-          art: "Артикул: 180162/44798",
-        },
-        {
-          id: 6,
-          name: "Ручка шариковая Cello Writo-meter",
-          types: [0, 1],
-          img: "https://kancmart.com.ua/content/images/1/240x240l85nn0/87693775224907.webp",
-          price: 20,
-          category: 2,
-          rating: 4,
-          art: "Артикул: 80/100",
-        },
-        {
-          id: 7,
-          name: "Бумага для принтера белая А4 160г/м 250л. COLOR COPY",
-          types: [0, 1],
-          img: "https://kancmart.com.ua/content/images/1/240x199l85nn0/83185240381773.webp",
-          price: 100,
-          category: 0,
-          rating: 5,
-          art: "Артикул: 150772/03220",
-        },
-        {
-          id: 8,
-          name: "Бумага для принтера А4 белая 80г/м 100л. Офисная арт.80/100",
-          types: [0, 1],
-          img: "https://kancmart.com.ua/content/images/50/240x240l85nn0/28161129036556.webp",
-          price: 250,
-          category: 0,
-          rating: 4,
-          art: "Артикул: H000814",
-        },
-        {
-          id: 9,
-          name: "Ежедневник А5 LEO Planner 2022 Case 25211*",
-          types: [0, 1],
-          img: "https://kancmart.com.ua/content/images/22/240x240l85nn0/83928601725368.webp",
-          price: 80,
-          category: 3,
-          rating: 3,
-          art: "Артикул: 500184",
-        },
-        {
-          id: 9,
-          name: "Ежедневник 2022 Buromax A5 Ideal BM.2175",
-          types: [0, 1],
-          img: "https://kancmart.com.ua/content/images/31/240x240l85nn0/25860400440245.webp",
-          price: 90,
-          category: 3,
-          rating: 3,
-          art: "Артикул: E11914-01",
-        },
-      ],
+      goods: [],
       sort: [
         { name: "популярности", type: "popular", order: "desc" },
         { name: "цене", type: "price", order: "desc" },
@@ -151,10 +58,30 @@ export default {
         { id: 3, name: "Дневники" },
         { id: 4, name: "Другое" },
       ],
+      activeCategory: "",
+      isModalOpen: false,
     };
   },
-  methods: {},
-  computed: {},
-  mounted() {},
+  methods: {
+    selectCategory(category) {
+      this.activeCategory = category;
+      console.log(category);
+    },
+    openModal() {
+      this.isModalOpen = true;
+    },
+  },
+  computed: {
+    filterGoods() {
+      return this.goods.filter((item) => {
+        return item.category === this.activeCategory;
+      });
+    },
+  },
+  mounted() {
+    axios.get("http://localhost:8080/goods.json").then(({ data }) => {
+      this.goods = data.goods;
+    });
+  },
 };
 </script>

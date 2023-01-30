@@ -26,7 +26,7 @@
             <div class="goods__price">{{ good.price }} грн</div>
             <div class="goods__rating"></div>
           </div>
-          <div class="button--add" outline></div>
+          <BaseButton> Add</BaseButton>
         </div>
       </div>
     </div>
@@ -72,8 +72,9 @@
 </template>
 
 <script>
+import BaseButton from "../base/BaseButton.vue";
 export default {
-  name: "MainGoods",
+  components: { BaseButton },
   props: {
     goods: {
       type: Object,
