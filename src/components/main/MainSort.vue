@@ -19,8 +19,8 @@
     </div>
     <div v-if="isVisibleSort" class="sort__popup" ref="sort">
       <ul v-if="sort">
-        <li v-for="sort in sort" :key="sort.name">
-          {{ sort.name }}
+        <li @click="onClickSortType(obj)" v-for="obj in sort" :key="obj.name">
+          {{ obj.name }}
         </li>
       </ul>
     </div>
@@ -42,6 +42,10 @@ export default {
   },
 
   methods: {
+    onClickSortType(obj) {
+      this.$emit("onClickSortType", obj);
+      this.isVisibleSort = false;
+    },
     // handleClick(e) {
     //   console.log(e);
     //   // if (!e.path.includes(this.$refs.sort)) {

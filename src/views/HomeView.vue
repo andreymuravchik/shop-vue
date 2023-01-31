@@ -9,12 +9,20 @@
             :catesories="catesories"
             @selectCategory="selectCategory"
           />
-          <MainSort v-if="sort" :sort="sort" />
+          <MainSort
+            @onClickSortType="onClickSortType"
+            v-if="sort"
+            :sort="sort"
+          />
         </div>
         <h2 class="content__title">Все пиццы</h2>
-        <div class="goods__wrap">
-          <MainGoods :goods="filterGoods" v-if="goods" />
+        <div v-if="loaded" class="goods__wrap">
+          <MainGoods :goods="goods" v-if="goods" />
         </div>
+        <div v-else class="goods__wrap">
+          <BaseLoader />
+        </div>
+
         <button type="button" class="btn btn-primary" @click="openModal">
           Подробнее
         </button>
@@ -32,20 +40,27 @@
 </template>
 
 <script>
-import axios from "axios";
-
 import MainGoods from "@/components/main/MainGoods.vue";
 import MainSort from "@/components/main/MainSort.vue";
 import MainCategories from "@/components/main/MainCategories.vue";
 import BaseHeader from "@/components/base/BaseHeader.vue";
 import GoodsPopup from "@/components/popup/GoodsPopup.vue";
+import BaseLoader from "../components/base/BaseLoader.vue";
+
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "HomeView",
-  components: { MainGoods, MainSort, MainCategories, BaseHeader, GoodsPopup },
+  components: {
+    MainGoods,
+    MainSort,
+    MainCategories,
+    BaseHeader,
+    GoodsPopup,
+    BaseLoader,
+  },
   data() {
     return {
-      goods: [],
       sort: [
         { name: "популярности", type: "popular", order: "desc" },
         { name: "цене", type: "price", order: "desc" },
@@ -58,30 +73,45 @@ export default {
         { id: 3, name: "Дневники" },
         { id: 4, name: "Другое" },
       ],
-      activeCategory: "",
       isModalOpen: false,
     };
   },
   methods: {
     selectCategory(category) {
-      this.activeCategory = category;
-      console.log(category);
+      this.setCategor(category);
+      this.load(category);
+    },
+    onClickSortType(sortObj) {
+      this.setSortBy(sortObj);
+      // this.load(sortObj);
     },
     openModal() {
       this.isModalOpen = true;
     },
+    ...mapActions({
+      load: "goods/loadGoods",
+      setCategor: "filters/setCategor",
+      setSortBy: "filters/setSortBy",
+    }),
   },
   computed: {
-    filterGoods() {
-      return this.goods.filter((item) => {
-        return item.category === this.activeCategory;
-      });
+    ...mapGetters({
+      getGoods: "goods/getGoods",
+      getLoaded: "goods/getLoaded",
+      getCategory: "filters/getCategory",
+      getSort: "filters/getSort",
+    }),
+    goods() {
+      return this.getGoods;
+    },
+    loaded() {
+      return this.getLoaded;
     },
   },
+
   mounted() {
-    axios.get("http://localhost:8080/goods.json").then(({ data }) => {
-      this.goods = data.goods;
-    });
+    this.load(null);
   },
+  updated() {},
 };
 </script>

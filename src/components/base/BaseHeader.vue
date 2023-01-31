@@ -44,13 +44,54 @@
           <span>3</span>
         </a>
       </div>
+      <button
+        type="button"
+        class="btn btn-outline-light btn-lg"
+        @click="onAuthBtnClick"
+      >
+        {{ getUser ? "Выйти" : "Войти" }}
+      </button>
     </div>
+    <PopupAuth v-if="isAuthModalOpen" @close="isAuthModalOpen = false" />
   </div>
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+import PopupAuth from "../popup/PopupAuth.vue";
 export default {
   name: "BaseHeader",
+  components: { PopupAuth },
+  data() {
+    return {
+      isAuthorized: false,
+      isAuthModalOpen: false,
+    };
+  },
+  computed: {
+    ...mapGetters({
+      getUser: "user/getUser",
+    }),
+  },
+  created() {
+    this.setUser(JSON.parse(localStorage.getItem("user")));
+  },
+  methods: {
+    ...mapActions({
+      setUser: "user/setUser",
+      deleteUser: "user/deleteUser",
+    }),
+    onAuthBtnClick() {
+      if (this.getUser) {
+        this.$api.auth.logout();
+        localStorage.removeItem("user");
+        this.deleteUser();
+        this.$router.push({ name: "main" });
+      } else {
+        this.isAuthModalOpen = true;
+      }
+    },
+  },
 };
 </script>
 
